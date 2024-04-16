@@ -1,0 +1,55 @@
+---
+title: "STA 445 HW3"
+author: "Graceson Mule"
+date: "03/05/2024"
+output: pdf_document
+---
+
+## Problem 1
+
+Download from GitHub the data file [Example_5.xls](https://github.com/dereksonderegger/444/raw/master/data-raw/Example_5.xls). Open it in Excel and figure out which sheet of data we should import into R. At the same time figure out how many initial rows need to be skipped. Import the data set into a data frame and show the structure of the imported data using the `str()` command. Make sure that your data has $n=31$ observations and the three columns are appropriately named. If you make any modifications to the data file, comment on those modifications.
+```{r}
+library(readxl)
+Example5 <- read_excel("Example_5.xls", sheet = 'RawData', range = 'A5:C36')
+str(Example5)
+```
+
+
+## Problem 2
+
+Download from GitHub the data file  [Example_3.xls](https://github.com/dereksonderegger/444/raw/master/data-raw/Example_3.xls). Import the data set into a data frame and show the structure of the imported data using the `tail()` command which shows the last few rows of a data table.  Make sure the Tesla values are `NA` where appropriate and that both `-9999` and `NA` are imported as NA values. If you make any modifications to  the data file, comment on those modifications.
+```{r}
+Example3 <- read_excel("Example_3.xls", sheet='data', range= 'A1:L34', na = c("NA", -9999))
+tail(Example3)
+```
+
+
+## Problem 3
+
+Download all of the files from GitHub `data-raw/InsectSurveys` directory 
+[here.](https://github.com/dereksonderegger/444/raw/master/data-raw/InsectSurveys) Each month's file contains a sheet contains site level information about each of the sites that was surveyed. The second sheet contains information about the number of each species that was observed at each site. Import the data for each month and create a single `site` data frame with information from each month. Do the same for the `observations`. Document any modifications you make to the data files. Comment on the importance of consistency of your data input sheets.
+```{r}
+insectSurveyFiles <- c('August.xlsx', 'July.xlsx', 'June.xlsx', 'May.xlsx', 
+                       'October.xlsx','September.xlsx')
+
+
+site <- NULL;
+observations <- NULL;
+
+for(file in insectSurveyFiles)
+{
+  temp.data <- read_excel(path = file, sheet=1, range='A1:F10')
+  
+  site <- rbind(site, temp.data)
+  
+  temp.data <- read_excel(path = file, sheet=2, range='A1:C37')
+  
+  observations <- rbind(observations, temp.data)
+}
+
+```
+In order to get the files to read in properly I had to adjust some of the column names to match
+the capitalization of the others as well as changing the cell format of the date cells. This is important because if you
+are trying to import multiple excel files and the cell names and format do not match exactly then
+it will result in an error or might not read them in properly.
+
